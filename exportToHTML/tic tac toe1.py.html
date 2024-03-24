@@ -1,0 +1,156 @@
+<html>
+<head>
+<title>tic tac toe1.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #2aacb8;}
+.s4 { color: #6aab73;}
+.s5 { color: #7a7e85;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+tic tac toe1.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">pygame</span>
+<span class="s0">import </span><span class="s1">sys</span>
+<span class="s1">pygame</span><span class="s2">.</span><span class="s1">init</span><span class="s2">()</span>
+<span class="s0">import </span><span class="s1">tensorflow </span><span class="s0">as </span><span class="s1">tf</span>
+<span class="s0">from </span><span class="s1">tensorflow</span><span class="s2">.</span><span class="s1">keras </span><span class="s0">import </span><span class="s1">layers</span><span class="s2">, </span><span class="s1">models</span>
+
+<span class="s0">def </span><span class="s1">check_win</span><span class="s2">(</span><span class="s1">field</span><span class="s2">, </span><span class="s1">sign</span><span class="s2">):</span>
+    <span class="s1">zero </span><span class="s2">= </span><span class="s3">0</span>
+    <span class="s0">for </span><span class="s1">row </span><span class="s0">in </span><span class="s1">field</span><span class="s2">:</span>
+        <span class="s1">zero </span><span class="s2">+= </span><span class="s1">row</span><span class="s2">.</span><span class="s1">count</span><span class="s2">(</span><span class="s3">0</span><span class="s2">)</span>
+        <span class="s0">if </span><span class="s1">row</span><span class="s2">.</span><span class="s1">count</span><span class="s2">(</span><span class="s1">sign</span><span class="s2">)==</span><span class="s3">3</span><span class="s2">:</span>
+            <span class="s0">return </span><span class="s1">sign</span>
+    <span class="s0">for </span><span class="s1">col </span><span class="s0">in </span><span class="s1">range</span><span class="s2">(</span><span class="s3">3</span><span class="s2">):</span>
+        <span class="s0">if </span><span class="s1">field</span><span class="s2">[</span><span class="s3">0</span><span class="s2">] [</span><span class="s1">col</span><span class="s2">]==</span><span class="s1">sign </span><span class="s0">and </span><span class="s1">field</span><span class="s2">[</span><span class="s3">1</span><span class="s2">] [</span><span class="s1">col</span><span class="s2">]==</span><span class="s1">sign </span><span class="s0">and </span><span class="s1">field</span><span class="s2">[</span><span class="s3">2</span><span class="s2">] [</span><span class="s1">col</span><span class="s2">]==</span><span class="s1">sign</span><span class="s2">:</span>
+            <span class="s0">return </span><span class="s1">sign</span>
+    <span class="s0">if </span><span class="s1">field</span><span class="s2">[</span><span class="s3">0</span><span class="s2">][</span><span class="s3">0</span><span class="s2">] == </span><span class="s1">sign </span><span class="s0">and </span><span class="s1">field</span><span class="s2">[</span><span class="s3">1</span><span class="s2">][</span><span class="s3">1</span><span class="s2">] == </span><span class="s1">sign </span><span class="s0">and </span><span class="s1">field</span><span class="s2">[</span><span class="s3">2</span><span class="s2">][</span><span class="s3">2</span><span class="s2">] == </span><span class="s1">sign</span><span class="s2">:</span>
+        <span class="s0">return </span><span class="s1">sign</span>
+    <span class="s0">if </span><span class="s1">field</span><span class="s2">[</span><span class="s3">2</span><span class="s2">][</span><span class="s3">0</span><span class="s2">] == </span><span class="s1">sign </span><span class="s0">and </span><span class="s1">field</span><span class="s2">[</span><span class="s3">1</span><span class="s2">][</span><span class="s3">1</span><span class="s2">] == </span><span class="s1">sign </span><span class="s0">and </span><span class="s1">field</span><span class="s2">[</span><span class="s3">0</span><span class="s2">][</span><span class="s3">2</span><span class="s2">] == </span><span class="s1">sign</span><span class="s2">:</span>
+        <span class="s0">return </span><span class="s1">sign</span>
+    <span class="s0">if </span><span class="s1">zero </span><span class="s2">==</span><span class="s3">0</span><span class="s2">:</span>
+        <span class="s0">return </span><span class="s4">'Ничья'</span>
+    <span class="s0">return False</span>
+
+<span class="s0">def </span><span class="s1">update_score</span><span class="s2">(</span><span class="s1">winner</span><span class="s2">):</span>
+    <span class="s0">global </span><span class="s1">nScore</span><span class="s2">, </span><span class="s1">pScore</span>
+    <span class="s0">if </span><span class="s1">winner </span><span class="s2">== </span><span class="s4">'x'</span><span class="s2">:</span>
+        <span class="s1">pScore </span><span class="s2">+= </span><span class="s3">1</span>
+        <span class="s1">print</span><span class="s2">(</span><span class="s1">pScore</span><span class="s2">)</span>
+    <span class="s0">elif </span><span class="s1">winner </span><span class="s2">== </span><span class="s4">'o'</span><span class="s2">:</span>
+        <span class="s1">nScore </span><span class="s2">+= </span><span class="s3">1</span>
+        <span class="s1">print</span><span class="s2">(</span><span class="s1">nScore</span><span class="s2">)</span>
+
+
+
+<span class="s1">WHITE </span><span class="s2">= (</span><span class="s3">255</span><span class="s2">, </span><span class="s3">255</span><span class="s2">, </span><span class="s3">255</span><span class="s2">)</span>
+<span class="s1">BLACK </span><span class="s2">= (</span><span class="s3">0</span><span class="s2">, </span><span class="s3">0</span><span class="s2">, </span><span class="s3">0</span><span class="s2">)</span>
+<span class="s1">GRAY </span><span class="s2">= (</span><span class="s3">125</span><span class="s2">, </span><span class="s3">125</span><span class="s2">, </span><span class="s3">125</span><span class="s2">)</span>
+<span class="s1">WHITE_GREEN </span><span class="s2">= (</span><span class="s3">190</span><span class="s2">, </span><span class="s3">235</span><span class="s2">, </span><span class="s3">175</span><span class="s2">)</span>
+<span class="s1">GREEN </span><span class="s2">= (</span><span class="s3">40</span><span class="s2">, </span><span class="s3">114</span><span class="s2">, </span><span class="s3">51</span><span class="s2">)</span>
+<span class="s1">PINK </span><span class="s2">= (</span><span class="s3">216</span><span class="s2">, </span><span class="s3">105</span><span class="s2">, </span><span class="s3">166</span><span class="s2">)</span>
+<span class="s1">PURPLE </span><span class="s2">= (</span><span class="s3">153</span><span class="s2">, </span><span class="s3">102</span><span class="s2">, </span><span class="s3">204</span><span class="s2">)</span>
+
+<span class="s1">nScore </span><span class="s2">= </span><span class="s3">0 </span><span class="s5">#счёт нейросети</span>
+<span class="s1">pScore </span><span class="s2">= </span><span class="s3">0 </span><span class="s5">#счёт человека</span>
+<span class="s1">font </span><span class="s2">= </span><span class="s1">pygame</span><span class="s2">.</span><span class="s1">font</span><span class="s2">.</span><span class="s1">SysFont</span><span class="s2">(</span><span class="s4">'arialblack'</span><span class="s2">,</span><span class="s3">18</span><span class="s2">)</span>
+<span class="s1">textnSc </span><span class="s2">= </span><span class="s1">font</span><span class="s2">.</span><span class="s1">render</span><span class="s2">(</span><span class="s4">&quot;нейросеть:&quot;</span><span class="s2">, </span><span class="s3">1</span><span class="s2">, </span><span class="s1">GREEN</span><span class="s2">)</span>
+<span class="s1">textpSc </span><span class="s2">= </span><span class="s1">font</span><span class="s2">.</span><span class="s1">render</span><span class="s2">(</span><span class="s4">&quot;человек:&quot;</span><span class="s2">, </span><span class="s3">1</span><span class="s2">, </span><span class="s1">GREEN</span><span class="s2">)</span>
+<span class="s1">numnSc </span><span class="s2">= </span><span class="s1">font</span><span class="s2">.</span><span class="s1">render</span><span class="s2">(</span><span class="s1">str</span><span class="s2">(</span><span class="s1">nScore</span><span class="s2">), </span><span class="s3">1</span><span class="s2">, </span><span class="s1">GREEN</span><span class="s2">)</span>
+<span class="s1">numpSc </span><span class="s2">= </span><span class="s1">font</span><span class="s2">.</span><span class="s1">render</span><span class="s2">(</span><span class="s1">str</span><span class="s2">(</span><span class="s1">pScore</span><span class="s2">), </span><span class="s3">1</span><span class="s2">, </span><span class="s1">GREEN</span><span class="s2">)</span>
+
+<span class="s1">pygame</span><span class="s2">.</span><span class="s1">init</span><span class="s2">()</span>
+
+<span class="s1">block </span><span class="s2">= </span><span class="s3">100</span>
+<span class="s1">margin </span><span class="s2">= </span><span class="s3">15</span>
+<span class="s1">margin_button </span><span class="s2">= </span><span class="s3">100</span>
+
+<span class="s1">width </span><span class="s2">= </span><span class="s1">block</span><span class="s2">*</span><span class="s3">3 </span><span class="s2">+ </span><span class="s1">margin</span><span class="s2">*</span><span class="s3">4</span>
+<span class="s1">height </span><span class="s2">= </span><span class="s1">block</span><span class="s2">*</span><span class="s3">3 </span><span class="s2">+ </span><span class="s1">margin</span><span class="s2">*</span><span class="s3">4 </span><span class="s2">+ </span><span class="s1">margin_button</span>
+
+<span class="s1">rect_nnWin</span><span class="s2">=</span><span class="s1">pygame</span><span class="s2">.</span><span class="s1">Rect</span><span class="s2">((</span><span class="s3">15</span><span class="s2">,</span><span class="s3">360</span><span class="s2">),(</span><span class="s3">150</span><span class="s2">,</span><span class="s3">50</span><span class="s2">)) </span><span class="s5">#победа нейросети</span>
+<span class="s1">rect_ppWin</span><span class="s2">=</span><span class="s1">pygame</span><span class="s2">.</span><span class="s1">Rect</span><span class="s2">((</span><span class="s3">195</span><span class="s2">,</span><span class="s3">360</span><span class="s2">),(</span><span class="s3">150</span><span class="s2">,</span><span class="s3">50</span><span class="s2">)) </span><span class="s5">#победа человека</span>
+
+<span class="s1">window </span><span class="s2">= (</span><span class="s1">width</span><span class="s2">, </span><span class="s1">height</span><span class="s2">)</span>
+<span class="s1">screen </span><span class="s2">= </span><span class="s1">pygame</span><span class="s2">.</span><span class="s1">display</span><span class="s2">.</span><span class="s1">set_mode</span><span class="s2">(</span><span class="s1">window</span><span class="s2">)</span>
+<span class="s1">screen</span><span class="s2">.</span><span class="s1">fill</span><span class="s2">(</span><span class="s1">GREEN</span><span class="s2">)</span>
+<span class="s1">pygame</span><span class="s2">.</span><span class="s1">display</span><span class="s2">.</span><span class="s1">set_caption</span><span class="s2">(</span><span class="s4">&quot;Tic-tac-toe&quot;</span><span class="s2">)</span>
+
+<span class="s1">field </span><span class="s2">= [[</span><span class="s3">0</span><span class="s2">]*</span><span class="s3">3 </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range </span><span class="s2">(</span><span class="s3">3</span><span class="s2">)]</span>
+<span class="s1">game_over </span><span class="s2">= </span><span class="s0">False</span>
+<span class="s1">change </span><span class="s2">= </span><span class="s3">0</span>
+<span class="s1">counter </span><span class="s2">= </span><span class="s3">0</span>
+
+<span class="s0">while True</span><span class="s2">:</span>
+        <span class="s0">for </span><span class="s1">event </span><span class="s0">in </span><span class="s1">pygame</span><span class="s2">.</span><span class="s1">event</span><span class="s2">.</span><span class="s1">get</span><span class="s2">():</span>
+                <span class="s0">if </span><span class="s1">event</span><span class="s2">.</span><span class="s1">type </span><span class="s2">== </span><span class="s1">pygame</span><span class="s2">.</span><span class="s1">QUIT</span><span class="s2">:</span>
+                    <span class="s1">pygame</span><span class="s2">.</span><span class="s1">quit</span><span class="s2">()</span>
+                    <span class="s1">sys</span><span class="s2">.</span><span class="s1">exit</span><span class="s2">(</span><span class="s3">0</span><span class="s2">)</span>
+                <span class="s0">elif </span><span class="s1">event</span><span class="s2">.</span><span class="s1">type </span><span class="s2">== </span><span class="s1">pygame</span><span class="s2">.</span><span class="s1">MOUSEBUTTONDOWN </span><span class="s0">and not </span><span class="s1">game_over</span><span class="s2">:</span>
+                    <span class="s1">x_mouse</span><span class="s2">, </span><span class="s1">y_mouse </span><span class="s2">= </span><span class="s1">pygame</span><span class="s2">.</span><span class="s1">mouse</span><span class="s2">.</span><span class="s1">get_pos</span><span class="s2">()</span>
+                    <span class="s1">col </span><span class="s2">= </span><span class="s1">x_mouse </span><span class="s2">// (</span><span class="s1">block </span><span class="s2">+ </span><span class="s1">margin</span><span class="s2">)</span>
+                    <span class="s1">row </span><span class="s2">= </span><span class="s1">y_mouse </span><span class="s2">// (</span><span class="s1">block </span><span class="s2">+ </span><span class="s1">margin</span><span class="s2">)</span>
+                    <span class="s0">if </span><span class="s1">field</span><span class="s2">[</span><span class="s1">row</span><span class="s2">][</span><span class="s1">col</span><span class="s2">] == </span><span class="s3">0</span><span class="s2">:</span>
+                        <span class="s0">if </span><span class="s1">change</span><span class="s2">%</span><span class="s3">2</span><span class="s2">==</span><span class="s3">0</span><span class="s2">:</span>
+                            <span class="s1">field</span><span class="s2">[</span><span class="s1">row</span><span class="s2">][</span><span class="s1">col</span><span class="s2">] = </span><span class="s4">'x'</span>
+                        <span class="s0">else</span><span class="s2">:</span>
+                            <span class="s1">field</span><span class="s2">[</span><span class="s1">row</span><span class="s2">][</span><span class="s1">col</span><span class="s2">] = </span><span class="s4">'o'</span>
+                        <span class="s1">change</span><span class="s2">+=</span><span class="s3">1</span>
+                <span class="s0">elif </span><span class="s1">event</span><span class="s2">.</span><span class="s1">type </span><span class="s2">== </span><span class="s1">pygame</span><span class="s2">.</span><span class="s1">KEYDOWN </span><span class="s0">and </span><span class="s1">event</span><span class="s2">.</span><span class="s1">key </span><span class="s2">== </span><span class="s1">pygame</span><span class="s2">.</span><span class="s1">K_SPACE</span><span class="s2">:</span>
+                    <span class="s1">game_over </span><span class="s2">= </span><span class="s0">False</span>
+                    <span class="s1">field </span><span class="s2">= [[</span><span class="s3">0</span><span class="s2">] * </span><span class="s3">3 </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range</span><span class="s2">(</span><span class="s3">3</span><span class="s2">)]</span>
+                    <span class="s1">change </span><span class="s2">= </span><span class="s3">0</span>
+                    <span class="s1">screen</span><span class="s2">.</span><span class="s1">fill</span><span class="s2">(</span><span class="s1">GREEN</span><span class="s2">)</span>
+
+        <span class="s1">screen</span><span class="s2">.</span><span class="s1">fill</span><span class="s2">(</span><span class="s1">PINK</span><span class="s2">,</span><span class="s1">rect_nnWin</span><span class="s2">)</span>
+        <span class="s1">screen</span><span class="s2">.</span><span class="s1">fill</span><span class="s2">(</span><span class="s1">PINK</span><span class="s2">,</span><span class="s1">rect_ppWin</span><span class="s2">)</span>
+        <span class="s1">screen</span><span class="s2">.</span><span class="s1">blit</span><span class="s2">(</span><span class="s1">textnSc</span><span class="s2">, ((</span><span class="s3">15</span><span class="s2">,</span><span class="s3">355</span><span class="s2">),(</span><span class="s3">150</span><span class="s2">,</span><span class="s3">50</span><span class="s2">)))</span>
+        <span class="s1">screen</span><span class="s2">.</span><span class="s1">blit</span><span class="s2">(</span><span class="s1">textpSc</span><span class="s2">, ((</span><span class="s3">195</span><span class="s2">,</span><span class="s3">355</span><span class="s2">),(</span><span class="s3">150</span><span class="s2">,</span><span class="s3">50</span><span class="s2">)))</span>
+        <span class="s1">screen</span><span class="s2">.</span><span class="s1">blit</span><span class="s2">(</span><span class="s1">numnSc</span><span class="s2">, ((</span><span class="s3">15</span><span class="s2">, </span><span class="s3">370</span><span class="s2">), (</span><span class="s3">150</span><span class="s2">, </span><span class="s3">50</span><span class="s2">)))</span>
+        <span class="s1">screen</span><span class="s2">.</span><span class="s1">blit</span><span class="s2">(</span><span class="s1">numpSc</span><span class="s2">, ((</span><span class="s3">195</span><span class="s2">, </span><span class="s3">370</span><span class="s2">), (</span><span class="s3">150</span><span class="s2">, </span><span class="s3">50</span><span class="s2">)))</span>
+
+        <span class="s1">pygame</span><span class="s2">.</span><span class="s1">display</span><span class="s2">.</span><span class="s1">update</span><span class="s2">()</span>
+
+        <span class="s0">if not </span><span class="s1">game_over</span><span class="s2">:</span>
+            <span class="s0">for </span><span class="s1">row </span><span class="s0">in </span><span class="s1">range</span><span class="s2">(</span><span class="s3">3</span><span class="s2">):</span>
+                <span class="s0">for </span><span class="s1">col </span><span class="s0">in </span><span class="s1">range</span><span class="s2">(</span><span class="s3">3</span><span class="s2">):</span>
+                    <span class="s0">if </span><span class="s1">field </span><span class="s2">[</span><span class="s1">row</span><span class="s2">] [</span><span class="s1">col</span><span class="s2">] == </span><span class="s4">'x'</span><span class="s2">:</span>
+                        <span class="s1">color </span><span class="s2">= </span><span class="s1">PINK</span>
+                    <span class="s0">elif </span><span class="s1">field</span><span class="s2">[</span><span class="s1">row</span><span class="s2">][</span><span class="s1">col</span><span class="s2">] == </span><span class="s4">'o'</span><span class="s2">:</span>
+                        <span class="s1">color </span><span class="s2">= </span><span class="s1">PURPLE</span>
+                    <span class="s0">else</span><span class="s2">:</span>
+                        <span class="s1">color </span><span class="s2">= </span><span class="s1">WHITE_GREEN</span>
+                    <span class="s1">x </span><span class="s2">= </span><span class="s1">col</span><span class="s2">*</span><span class="s1">block </span><span class="s2">+ (</span><span class="s1">col </span><span class="s2">+ </span><span class="s3">1</span><span class="s2">)*</span><span class="s1">margin</span>
+                    <span class="s1">y </span><span class="s2">= </span><span class="s1">row</span><span class="s2">*</span><span class="s1">block </span><span class="s2">+ (</span><span class="s1">row </span><span class="s2">+ </span><span class="s3">1</span><span class="s2">)*</span><span class="s1">margin</span>
+                    <span class="s1">pygame</span><span class="s2">.</span><span class="s1">draw</span><span class="s2">.</span><span class="s1">rect</span><span class="s2">(</span><span class="s1">screen</span><span class="s2">, </span><span class="s1">color</span><span class="s2">, (</span><span class="s1">x</span><span class="s2">, </span><span class="s1">y</span><span class="s2">, </span><span class="s1">block</span><span class="s2">, </span><span class="s1">block</span><span class="s2">))</span>
+                    <span class="s0">if </span><span class="s1">color </span><span class="s2">== </span><span class="s1">PINK</span><span class="s2">:</span>
+                        <span class="s1">pygame</span><span class="s2">.</span><span class="s1">draw</span><span class="s2">.</span><span class="s1">line</span><span class="s2">(</span><span class="s1">screen</span><span class="s2">, </span><span class="s1">WHITE</span><span class="s2">, (</span><span class="s1">x </span><span class="s2">+ </span><span class="s3">5</span><span class="s2">, </span><span class="s1">y </span><span class="s2">+ </span><span class="s3">5</span><span class="s2">), (</span><span class="s1">x </span><span class="s2">+ </span><span class="s1">block </span><span class="s2">- </span><span class="s3">5</span><span class="s2">, </span><span class="s1">y </span><span class="s2">+ </span><span class="s1">block </span><span class="s2">- </span><span class="s3">5</span><span class="s2">), </span><span class="s3">7</span><span class="s2">)</span>
+                        <span class="s1">pygame</span><span class="s2">.</span><span class="s1">draw</span><span class="s2">.</span><span class="s1">line</span><span class="s2">(</span><span class="s1">screen</span><span class="s2">, </span><span class="s1">WHITE</span><span class="s2">, (</span><span class="s1">x </span><span class="s2">+ </span><span class="s1">block </span><span class="s2">- </span><span class="s3">5</span><span class="s2">, </span><span class="s1">y </span><span class="s2">+ </span><span class="s3">5</span><span class="s2">), (</span><span class="s1">x </span><span class="s2">+ </span><span class="s3">5</span><span class="s2">, </span><span class="s1">y </span><span class="s2">+ </span><span class="s1">block </span><span class="s2">- </span><span class="s3">5</span><span class="s2">), </span><span class="s3">7</span><span class="s2">)</span>
+                    <span class="s0">elif </span><span class="s1">color </span><span class="s2">== </span><span class="s1">PURPLE</span><span class="s2">:</span>
+                        <span class="s1">pygame</span><span class="s2">.</span><span class="s1">draw</span><span class="s2">.</span><span class="s1">circle</span><span class="s2">(</span><span class="s1">screen</span><span class="s2">, </span><span class="s1">WHITE</span><span class="s2">, (</span><span class="s1">x </span><span class="s2">+ </span><span class="s1">block</span><span class="s2">//</span><span class="s3">2</span><span class="s2">, </span><span class="s1">y </span><span class="s2">+ </span><span class="s1">block</span><span class="s2">//</span><span class="s3">2</span><span class="s2">), </span><span class="s1">block</span><span class="s2">//</span><span class="s3">2 </span><span class="s2">- </span><span class="s3">3</span><span class="s2">, </span><span class="s3">5</span><span class="s2">)</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">change </span><span class="s2">- </span><span class="s3">1</span><span class="s2">)%</span><span class="s3">2</span><span class="s2">==</span><span class="s3">0 </span><span class="s2">:</span>
+            <span class="s1">game_over </span><span class="s2">= </span><span class="s1">check_win</span><span class="s2">(</span><span class="s1">field</span><span class="s2">, </span><span class="s4">'x'</span><span class="s2">)</span>
+            <span class="s1">counter </span><span class="s2">= </span><span class="s3">1</span>
+        <span class="s0">else</span><span class="s2">:</span>
+            <span class="s1">game_over </span><span class="s2">= </span><span class="s1">check_win</span><span class="s2">(</span><span class="s1">field</span><span class="s2">, </span><span class="s4">'o'</span><span class="s2">)</span>
+            <span class="s1">counter </span><span class="s2">= </span><span class="s3">2</span>
+        <span class="s0">if </span><span class="s1">game_over</span><span class="s2">:</span>
+            <span class="s0">if </span><span class="s1">counter </span><span class="s2">==</span><span class="s3">1</span><span class="s2">:</span>
+                <span class="s1">update_score</span><span class="s2">(</span><span class="s4">'x'</span><span class="s2">)</span>
+            <span class="s0">if </span><span class="s1">counter </span><span class="s2">==</span><span class="s3">2</span><span class="s2">:</span>
+                <span class="s1">update_score</span><span class="s2">(</span><span class="s4">'o'</span><span class="s2">)</span>
+            <span class="s1">print</span><span class="s2">(</span><span class="s4">&quot;емае!&quot;</span><span class="s2">)</span>
+
+        <span class="s1">pygame</span><span class="s2">.</span><span class="s1">display</span><span class="s2">.</span><span class="s1">update</span><span class="s2">()</span>
+</pre>
+</body>
+</html>
